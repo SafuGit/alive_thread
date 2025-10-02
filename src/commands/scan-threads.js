@@ -1,6 +1,6 @@
-import { ChannelType } from "discord.js";
+const { ChannelType } = require("discord.js");
 
-export async function scanThreads(interaction, guild, prisma) {
+async function scanThreads(interaction, guild, prisma) {
   try {
     await interaction.deferReply();
 
@@ -109,3 +109,5 @@ export async function scanThreads(interaction, guild, prisma) {
     }
   }
 }
+
+module.exports = { scanThreads };

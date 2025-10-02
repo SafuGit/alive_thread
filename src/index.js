@@ -4,6 +4,7 @@ const { Client, GatewayIntentBits, REST, Routes, ChannelType } = require("discor
 const { formatUptime } = require("./utils/formatUptime");
 const fs = require("fs");
 const { scanThreads } = require("./commands/scan-threads");
+const { listThreads } = require("./commands/list-threads");
 
 console.log("🚀 STARTING BOT...");
 
@@ -100,6 +101,10 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "scan-threads") {
     await scanThreads(interaction, guild, prisma);
+  }
+
+  if (commandName === "list-threads") {
+    await listThreads(interaction, guild, prisma);
   }
 });
 
