@@ -1,3 +1,5 @@
+import { ChannelType } from "discord.js";
+
 export async function scanThreads(interaction, guild, prisma) {
   try {
     await interaction.deferReply();
