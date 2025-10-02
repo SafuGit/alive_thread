@@ -1,0 +1,41 @@
+{
+  "name": "alive_thread",
+  "version": "1.0.0",
+  "description": "AliveThread is a simple Discord bot that helps keep your forum threads active so they don't get automatically closed by Discord.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "discord.js",
+    "discord bot",
+    "discord threads",
+    "keep alive",
+    "forum bot",
+    "thread keeper",
+    "thread alive",
+    "auto bump",
+    "discord forum",
+    "keep thread open",
+    "thread manager",
+    "prisma",
+    "neon db",
+    "database bot",
+    "alive thread",
+    "discord utility",
+    "community management"
+  ],
+  "author": {
+    "name": "Safwan Sadid",
+    "email": "safwansadid.ah@gmail.com",
+    "url": "https://safu-portfolio.netlify.app"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.16.3",
+    "discord.js": "^14.22.1",
+    "node-cron": "^4.2.1",
+    "prisma": "^6.16.3"
+  }
+}
