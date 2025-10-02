@@ -10,19 +10,30 @@ generator client {
 model Server {
   id        String    @id @default(cuid())
   name      String?
+  guildId   String    @unique
   createdAt DateTime  @default(now())
   threads   Thread[]
 }
 
 model Thread {
-  id                 String    @id                     
+  id                 String    @id @default(cuid())
+  threadId           String    @unique                   
   serverId           String
   server             Server    @relation(fields: [serverId], references: [id])
   name               String?
-  archived           Boolean   @default(false)          
-  lastMessageId      String?
-  bumpEnabled        Boolean   @default(true)
+  parentId           String?                       
+  locked             Boolean   @default(false)
+  invitable          Boolean?                      
+  archived           Boolean   @default(false)
   autoArchiveDuration Int?
+  archiveTimestamp   BigInt?                        
+  lastMessageId      String?
+  lastPinTimestamp   BigInt?
+  rateLimitPerUser   Int?                           
+  messageCount       Int?                           
+  memberCount        Int?                           
+  totalMessageSent   Int?
+  appliedTags        String[]                       
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
