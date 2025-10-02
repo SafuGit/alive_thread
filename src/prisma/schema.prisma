@@ -1,0 +1,28 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Server {
+  id        String    @id @default(cuid())
+  name      String?
+  createdAt DateTime  @default(now())
+  threads   Thread[]
+}
+
+model Thread {
+  id                 String    @id                     
+  serverId           String
+  server             Server    @relation(fields: [serverId], references: [id])
+  name               String?
+  archived           Boolean   @default(false)          
+  lastMessageId      String?
+  bumpEnabled        Boolean   @default(true)
+  autoArchiveDuration Int?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}

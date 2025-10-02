@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Client, GatewayIntentBits, REST, Routes } = require("discord.js");
 
 console.log("🚀 STARTING BOT...");
@@ -45,7 +46,7 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
   }
 })();
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
