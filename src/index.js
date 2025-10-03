@@ -7,6 +7,7 @@ const { scanThreads } = require("./commands/scan-threads");
 const { listThreads } = require("./commands/list-threads");
 const { listDeadThreads } = require("./commands/list-dead-threads");
 const { keepAliveCommand } = require("./commands/keep-alive");
+const { listKeepAlive } = require("./commands/list-keep-alive");
 
 console.log("🚀 STARTING BOT...");
 
@@ -37,6 +38,10 @@ const commands = [
   {
     name: "list-dead-threads",
     description: "List all dead threads",
+  },
+  {
+    name: "list-keep-alive",
+    description: "List all threads you are keeping alive",
   },
   {
     name: "keep-alive",
@@ -115,6 +120,10 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "list-dead-threads") {
     await listDeadThreads(interaction, guild, prisma);
+  }
+
+  if (commandName === "list-keep-alive") {
+    await listKeepAlive(interaction, guild, prisma);
   }
 
   if (commandName === "keep-alive") {
