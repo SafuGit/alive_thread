@@ -36,4 +36,18 @@ model Thread {
   appliedTags        String[]                       
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  keepAliveThreads   KeepAliveThread[]
+}
+
+model KeepAliveThread {
+  id          String   @id @default(cuid())
+  threadId    String
+  thread      Thread   @relation(fields: [threadId], references: [id])
+  userId      String   // Discord user ID who added it to keep-alive
+  userName    String?  // Optional: Discord username for reference
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([threadId, userId]) // Prevent same user from adding same thread multiple times
 }
