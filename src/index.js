@@ -5,6 +5,7 @@ const { formatUptime } = require("./utils/formatUptime");
 const fs = require("fs");
 const { scanThreads } = require("./commands/scan-threads");
 const { listThreads } = require("./commands/list-threads");
+const { listDeadThreads } = require("./commands/list-dead-threads");
 
 console.log("🚀 STARTING BOT...");
 
@@ -31,6 +32,10 @@ const commands = [
   {
     name: "list-threads",
     description: "List all saved threads",
+  },
+  {
+    name: "list-dead-threads",
+    description: "List all dead threads",
   },
   {
     name: "keep-alive",
@@ -105,6 +110,10 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "list-threads") {
     await listThreads(interaction, guild, prisma);
+  }
+
+  if (commandName === "list-dead-threads") {
+    await listDeadThreads(interaction, guild, prisma);
   }
 });
 
