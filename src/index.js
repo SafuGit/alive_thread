@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const { Client, GatewayIntentBits, REST, Routes, ChannelType } = require("discord.js");
-const { formatUptime } = require("./utils/formatUptime");
+const formatUptime = require("./utils/formatUptime");
 const fs = require("fs");
 const { scanThreads } = require("./commands/scan-threads");
 const { listThreads } = require("./commands/list-threads");
