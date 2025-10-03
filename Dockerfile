@@ -9,11 +9,11 @@ WORKDIR /usr/src/app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
-
 # Copy Prisma schema
 COPY src/prisma ./src/prisma
+
+# Install dependencies
+RUN npm ci --only=production
 
 # Generate Prisma client
 RUN npx prisma generate --schema=./src/prisma/schema.prisma
