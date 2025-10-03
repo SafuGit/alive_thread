@@ -8,6 +8,7 @@ const { listThreads } = require("./commands/list-threads");
 const { listDeadThreads } = require("./commands/list-dead-threads");
 const { keepAliveCommand } = require("./commands/keep-alive");
 const { listKeepAlive } = require("./commands/list-keep-alive");
+const { keepAliveNow } = require("./commands/keep-alive-now");
 
 console.log("🚀 STARTING BOT...");
 
@@ -47,6 +48,10 @@ const commands = [
     name: "keep-alive",
     description: "Keep a specific thread alive",
   },
+  {
+    name: "keep-alive-now",
+    description: "Immediately send a keep-alive message to the current thread",
+  }
 ];
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -128,6 +133,10 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "keep-alive") {
     await keepAliveCommand(interaction, guild, prisma);
+  }
+
+  if (commandName === "keep-alive-now") {
+    await keepAliveNow(interaction, guild, prisma);
   }
 });
 

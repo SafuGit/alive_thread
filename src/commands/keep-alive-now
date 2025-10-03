@@ -1,0 +1,84 @@
+const { keepThreadAlive } = require('../utils/keepThreadAlive');
+
+const keepAliveNow = async (interaction, guild, prisma) => {
+  try {
+    await interaction.deferReply({ ephemeral: true });
+
+    // Check if this is a thread
+    if (!interaction.channel.isThread()) {
+      return interaction.editReply({
+        content: "❌ This command can only be used in a thread."
+      });
+    }
+
+    const threadId = interaction.channel.id;
+
+    // Check if this thread is in the keep-alive list for this user
+    const keepAliveThread = await prisma.keepAliveThread.findFirst({
+      where: {
+        userId: interaction.user.id,
+        isActive: true,
+        thread: {
+          threadId: threadId,
+          server: {
+            guildId: guild.id
+          }
+        }
+      },
+      include: {
+        thread: true
+      }
+    });
+
+    if (!keepAliveThread) {
+      return interaction.editReply({
+        content: "❌ This thread is not in your keep-alive list. Use `/keep-alive` first to add it."
+      });
+    }
+
+    // Perform the keep-alive action
+    const success = await keepThreadAlive(interaction.client, threadId);
+
+    if (success) {
+      // Update the last keep-alive timestamp
+      await prisma.keepAliveThread.update({
+        where: { id: keepAliveThread.id },
+        data: { updatedAt: new Date() }
+      });
+
+      return interaction.editReply({
+        embeds: [{
+          color: 0xfbbf24,
+          title: "🔄 Thread Keep-Alive Activated",
+          description: `Successfully sent keep-alive message to **${keepAliveThread.thread.name}**`,
+          fields: [
+            {
+              name: "Action Taken",
+              value: "• Message sent to thread\n• Message will be deleted in 10 seconds",
+              inline: false
+            }
+          ],
+          timestamp: new Date(),
+          footer: { text: "AliveThread Bot" }
+        }]
+      });
+    } else {
+      return interaction.editReply({
+        content: "❌ Failed to send keep-alive message. The thread might be archived or inaccessible."
+      });
+    }
+
+  } catch (err) {
+    console.error('Error in keep-alive-now command:', err);
+    
+    const errorMessage = "❌ An error occurred while trying to keep the thread alive.";
+    
+    if (interaction.deferred || interaction.replied) {
+      return interaction.editReply({ content: errorMessage });
+    } else {
+      return interaction.reply({ content: errorMessage, ephemeral: true });
+    }
+  }
+};
+
+module.exports = { keepAliveNow };
