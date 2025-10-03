@@ -9,6 +9,8 @@ const { listDeadThreads } = require("./commands/list-dead-threads");
 const { keepAliveCommand } = require("./commands/keep-alive");
 const { listKeepAlive } = require("./commands/list-keep-alive");
 const { keepAliveNow } = require("./commands/keep-alive-now");
+const { startKeepAliveCron } = require("./services/cron");
+const { startHealthServer } = require("./services/healthServer");
 
 console.log("🚀 STARTING BOT...");
 
@@ -75,6 +77,9 @@ client.once("clientReady", () => {
   const permissions = 380104723520;
   const inviteLink = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=${permissions}&scope=bot%20applications.commands`;
   console.log(`Invite the bot using this link: ${inviteLink}`);
+
+  startKeepAliveCron(client, prisma);
+  startHealthServer(client, prisma);
 });
 
 client.on("interactionCreate", async (interaction) => {
