@@ -11,7 +11,10 @@
     "db:studio": "prisma studio",
     "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
     "docker:build": "docker build -t alive_thread-bot .",
-    "docker:run": "docker run -p 3000:3000 --env-file .env alive_thread-bot"
+    "docker:run": "docker run -p 3000:3000 --env-file .env alive_thread-bot",
+    "docker:tag": "docker tag alive_thread-bot thesafus/alive_threads:latest",
+    "docker:push": "docker push thesafus/alive_threads:latest",
+    "docker:deploy": "npm run docker:build && npm run docker:tag && npm run docker:push"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
