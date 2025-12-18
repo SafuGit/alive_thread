@@ -16,3 +16,5 @@ async function runKeepAliveNowAll(interaction, guild, prisma) {
     });
   }
 }
+
+module.exports = { runKeepAliveNowAll };
