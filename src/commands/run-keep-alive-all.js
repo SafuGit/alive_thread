@@ -1,3 +1,5 @@
+const { keepAliveFn } = require("../services/cron");
+
 async function runKeepAliveNowAll(interaction, guild, prisma) {
   try {
     await interaction.deferReply({ ephemeral: true });
