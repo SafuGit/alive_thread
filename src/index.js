@@ -11,6 +11,7 @@ const { listKeepAlive } = require("./commands/list-keep-alive");
 const { keepAliveNow } = require("./commands/keep-alive-now");
 const { startKeepAliveCron } = require("./services/cron");
 const { startHealthServer } = require("./services/healthServer");
+const { runKeepAliveNowAll } = require("./commands/run-keep-alive-all");
 
 console.log("🚀 STARTING BOT...");
 
@@ -53,6 +54,10 @@ const commands = [
   {
     name: "keep-alive-now",
     description: "Immediately send a keep-alive message to the current thread",
+  },
+  {
+    name: "run-keep-alive-all",
+    description: "Manually trigger the keep-alive process for all threads",
   }
 ];
 
@@ -71,6 +76,8 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
   }
 })();
 
+let healthServer;
+
 client.once("clientReady", () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
@@ -79,7 +86,8 @@ client.once("clientReady", () => {
   console.log(`Invite the bot using this link: ${inviteLink}`);
 
   startKeepAliveCron(client, prisma);
-  startHealthServer(client, prisma);
+  // Start health server and keep the server instance for graceful shutdown
+  healthServer = startHealthServer(client, prisma);
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -143,6 +151,47 @@ client.on("interactionCreate", async (interaction) => {
   if (commandName === "keep-alive-now") {
     await keepAliveNow(interaction, guild, prisma);
   }
+
+  if (commandName === "run-keep-alive-all") {
+    await runKeepAliveNowAll(interaction, guild, prisma);
+  }
 });
 
 client.login(TOKEN);
+
+const shutdown = async (signal) => {
+  try {
+    console.log(`⚠️ Received ${signal} — shutting down gracefully...`);
+
+    if (healthServer && typeof healthServer.close === 'function') {
+      console.log('🔒 Closing health server...');
+      // Close the HTTP server and wait for connections to drain
+      await new Promise((resolve) => healthServer.close(resolve));
+      console.log('✅ Health server closed');
+    }
+
+    console.log('🧹 Disconnecting Prisma...');
+    await prisma.$disconnect();
+
+    console.log('🔌 Destroying Discord client...');
+    try { client.destroy(); } catch (e) { /* ignore */ }
+
+    console.log('🚪 Exiting process');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during shutdown:', err);
+    process.exit(1);
+  }
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+  shutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+});

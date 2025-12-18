@@ -40,11 +40,11 @@ const startHealthServer = (client, prisma) => {
     });
   });
 
-  app.listen(port, '0.0.0.0', () => {
+  const server = app.listen(port, '0.0.0.0', () => {
     console.log(`🏥 Health server running on port ${port}`);
   });
 
-  return app;
+  return server;
 };
 
 module.exports = { startHealthServer };
