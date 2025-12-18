@@ -9,7 +9,7 @@ const { listDeadThreads } = require("./commands/list-dead-threads");
 const { keepAliveCommand } = require("./commands/keep-alive");
 const { listKeepAlive } = require("./commands/list-keep-alive");
 const { keepAliveNow } = require("./commands/keep-alive-now");
-const { startKeepAliveCron } = require("./services/cron");
+const { startKeepAliveCron, requestAbortKeepAlive, waitForKeepAliveStop } = require("./services/cron");
 const { startHealthServer } = require("./services/healthServer");
 const { runKeepAliveNowAll } = require("./commands/run-keep-alive-all");
 
@@ -162,6 +162,16 @@ client.login(TOKEN);
 const shutdown = async (signal) => {
   try {
     console.log(`⚠️ Received ${signal} — shutting down gracefully...`);
+
+    // Request running keep-alive job to stop and wait briefly for it to finish
+    try {
+      requestAbortKeepAlive();
+      console.log('✋ Requested keep-alive abort, waiting up to 10s...');
+      const stopped = await waitForKeepAliveStop(10000);
+      console.log(`🕴️ Keep-alive stopped: ${stopped}`);
+    } catch (e) {
+      console.error('Error while requesting keep-alive abort:', e);
+    }
 
     if (healthServer && typeof healthServer.close === 'function') {
       console.log('🔒 Closing health server...');

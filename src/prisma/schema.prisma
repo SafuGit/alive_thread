@@ -51,3 +51,9 @@ model KeepAliveThread {
 
   @@unique([threadId, userId]) // Prevent same user from adding same thread multiple times
 }
+
+model KeepAliveCursor {
+  id                      String   @id
+  lastKeepAliveThreadId   String?
+  updatedAt               DateTime @updatedAt
+}
