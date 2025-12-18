@@ -187,7 +187,7 @@ const shutdown = async (signal) => {
     try { client.destroy(); } catch (e) { /* ignore */ }
 
     console.log('🚪 Exiting process');
-    process.exit(0);
+    process.exit(1);
   } catch (err) {
     console.error('Error during shutdown:', err);
     process.exit(1);
